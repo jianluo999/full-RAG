@@ -2,36 +2,35 @@ package com.example.studyassistant.controller;
 
 import com.example.studyassistant.entity.Document;
 import com.example.studyassistant.repository.DocumentRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api")
 public class QueryController {
 
-    @Autowired
-    private DocumentRepository documentRepository;
+    private final DocumentRepository documentRepository;
 
-    @GetMapping("/query")
-    public ResponseEntity<List<Document>> queryDocuments(@RequestParam("q") String query) {
+    public QueryController(DocumentRepository documentRepository) {
+        this.documentRepository = documentRepository;
+    }
+
+    @PostMapping("/query")
+    public ResponseEntity<List<Document>> searchDocuments(@RequestBody Map<String, String> payload) {
+        String query = payload.get("query");
         if (query == null || query.trim().isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.badRequest().build();
         }
-
         try {
-            // 使用综合搜索方法查找相关文档
-            List<Document> results = documentRepository.findByKeyword(query.trim());
-            return new ResponseEntity<>(results, HttpStatus.OK);
+            List<Document> documents = documentRepository.findByKeyword(query.trim());
+            return ResponseEntity.ok(documents);
         } catch (Exception e) {
-            // Log the exception
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            e.printStackTrace(); // Log the exception in a real app
+            return ResponseEntity.internalServerError().build();
         }
     }
 

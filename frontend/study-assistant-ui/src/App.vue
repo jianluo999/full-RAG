@@ -12,6 +12,11 @@ const searchResults = ref([]);
 const searchError = ref('');
 const isSearching = ref(false);
 
+// 新增：AI回答相关的响应式变量
+const aiAnswer = ref('');
+const isThinking = ref(false);
+const aiError = ref('');
+
 function onFileChange(event) {
   selectedFile.value = event.target.files[0];
   errorMessage.value = '';
@@ -78,6 +83,32 @@ function clearSearch() {
   searchQuery.value = '';
   searchResults.value = [];
   searchError.value = '';
+  aiAnswer.value = ''; // 同时清空AI回答
+  aiError.value = '';
+}
+
+// 新增：请求AI回答的功能
+async function askAI() {
+  if (!searchQuery.value.trim()) {
+    aiError.value = 'Cannot ask AI without a search query.';
+    return;
+  }
+  
+  isThinking.value = true;
+  aiAnswer.value = '';
+  aiError.value = '';
+  
+  try {
+    const response = await axios.post('/api/rag/query', {
+      query: searchQuery.value.trim()
+    });
+    aiAnswer.value = response.data;
+  } catch (error) {
+    console.error('Error asking AI:', error);
+    aiError.value = 'Error getting answer from AI. Please check the console and backend logs.';
+  } finally {
+    isThinking.value = false;
+  }
 }
 </script>
 
@@ -124,6 +155,27 @@ function clearSearch() {
       <!-- 搜索结果显示 -->
       <div v-if="searchResults.length > 0" class="results-section">
         <h3>搜索结果 ({{ searchResults.length }} 个相关文档):</h3>
+        
+        <!-- 新增: AI回答按钮 -->
+        <div class="ai-ask-section">
+          <button @click="askAI" :disabled="isThinking" class="ai-btn">
+            <span v-if="isThinking">🤖 AI 思考中...</span>
+            <span v-else>🤖 让 AI 基于以上结果回答</span>
+          </button>
+        </div>
+
+        <!-- 新增: AI回答显示区域 -->
+        <div v-if="isThinking" class="ai-answer-thinking">
+          AI 正在根据检索到的内容生成答案，请稍候...
+        </div>
+        <div v-if="aiError" class="error-message">
+          {{ aiError }}
+        </div>
+        <div v-if="aiAnswer" class="ai-answer">
+          <h4>AI 的回答:</h4>
+          <p>{{ aiAnswer }}</p>
+        </div>
+        
         <div v-for="doc in searchResults" :key="doc.id" class="result-item">
           <div class="result-header">
             <h4>📋 {{ doc.fileName }}</h4>
@@ -236,6 +288,49 @@ button:disabled {
 .results-section h3 {
   color: #4CAF50;
   margin-bottom: 1rem;
+  border-bottom: 1px solid #444;
+  padding-bottom: 0.5rem;
+}
+
+.ai-ask-section {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.ai-btn {
+  background-color: #ff9800;
+  font-size: 1.1rem;
+  padding: 0.8rem 2rem;
+}
+
+.ai-btn:hover:not(:disabled) {
+  background-color: #f57c00;
+  border-color: #f57c00;
+}
+
+.ai-answer, .ai-answer-thinking {
+  margin: 2rem 0;
+  padding: 1.5rem;
+  background-color: #2c3e50;
+  border-radius: 6px;
+  border-left: 4px solid #ff9800;
+}
+
+.ai-answer-thinking {
+  color: #ff9800;
+  text-align: center;
+}
+
+.ai-answer h4 {
+  margin: 0 0 1rem 0;
+  color: #ff9800;
+}
+
+.ai-answer p {
+  color: #ecf0f1;
+  white-space: pre-wrap;
+  line-height: 1.7;
+  margin: 0;
 }
 
 .result-item {

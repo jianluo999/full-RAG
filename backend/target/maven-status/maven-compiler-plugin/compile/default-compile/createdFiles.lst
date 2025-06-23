@@ -1,4 +1,6 @@
+com\example\studyassistant\controller\RAGController.class
 com\example\studyassistant\entity\Document.class
 com\example\studyassistant\repository\DocumentRepository.class
-com\example\studyassistant\controller\FileUploadController.class
+com\example\studyassistant\controller\QueryController.class
 com\example\studyassistant\StudyAssistantApplication.class
+com\example\studyassistant\controller\FileUploadController.class

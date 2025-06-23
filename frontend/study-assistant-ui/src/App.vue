@@ -21,6 +21,12 @@ const isThinking = ref(false);
 const aiError = ref('');
 const chatHistoryContainer = ref(null);
 
+// Quiz State
+const quizQuestions = ref([]);
+const isGeneratingQuiz = ref(false);
+const quizError = ref('');
+const userAnswers = ref([]);
+const showAnswers = ref([]);
 
 const handleFileChange = (event) => {
   selectedFile.value = event.target.files[0];
@@ -68,6 +74,10 @@ const clearSearch = () => {
   searchQuery.value = '';
   searchResults.value = [];
   searchError.value = '';
+  chatHistory.value = [];
+  aiError.value = '';
+  quizQuestions.value = [];
+  quizError.value = '';
 };
 
 const scrollToBottom = () => {
@@ -121,6 +131,44 @@ const renderMarkdown = (content) => {
     return marked(content);
 }
 
+const mapQuestionTypeToChinese = (type) => {
+  switch (type) {
+    case 'multiple-choice':
+      return '选择题';
+    case 'short-answer':
+      return '简答题';
+    case 'term-explanation':
+      return '名词解释';
+    default:
+      return '题目';
+  }
+};
+
+const generateQuiz = async () => {
+  if (searchResults.value.length === 0) {
+    quizError.value = "请先搜索内容，再让AI出题。";
+    return;
+  }
+  isGeneratingQuiz.value = true;
+  quizError.value = '';
+  quizQuestions.value = [];
+
+  try {
+    const payload = {
+      contexts: searchResults.value.map(doc => doc.content),
+      numberOfQuestions: 3 // Let's ask for 3 questions for now
+    };
+    const response = await axios.post('/api/quiz/generate', payload);
+    quizQuestions.value = response.data;
+    userAnswers.value = new Array(response.data.length).fill('');
+    showAnswers.value = new Array(response.data.length).fill(false);
+  } catch (error) {
+    quizError.value = `生成题目出错: ${error.response?.data?.message || error.message}`;
+  } finally {
+    isGeneratingQuiz.value = false;
+  }
+};
+
 </script>
 
 <template>
@@ -172,6 +220,36 @@ const renderMarkdown = (content) => {
           </ul>
         </div>
 
+        <!-- QUIZ GENERATION BUTTON -->
+        <div class="quiz-generator">
+          <button @click="generateQuiz" :disabled="isGeneratingQuiz" class="ai-btn">
+            <span v-if="isGeneratingQuiz">🤖 AI 出题中...</span>
+            <span v-else>🤖 让 AI 考考我</span>
+          </button>
+        </div>
+
+        <!-- QUIZ DISPLAY SECTION -->
+        <div v-if="quizError" class="status-message error">{{ quizError }}</div>
+        <div v-if="quizQuestions.length > 0" class="quiz-container">
+          <h3>AI 随堂测试</h3>
+          <div v-for="(question, index) in quizQuestions" :key="index" class="quiz-question">
+            <p><strong>{{ index + 1 }}. ({{ mapQuestionTypeToChinese(question.type) }})</strong> {{ question.question }}</p>
+            <div v-if="question.type === 'multiple-choice'" class="options">
+              <div v-for="(option, oIndex) in question.options" :key="oIndex">
+                <input type="radio" :name="'q'+index" :id="'q'+index+'o'+oIndex" :value="option" v-model="userAnswers[index]">
+                <label :for="'q'+index+'o'+oIndex">{{ option }}</label>
+              </div>
+            </div>
+            <div v-else>
+              <input type="text" v-model="userAnswers[index]" class="short-answer-input" placeholder="输入你的答案...">
+            </div>
+            <button @click="showAnswers[index] = !showAnswers[index]" class="secondary small-btn">
+              {{ showAnswers[index] ? '隐藏答案' : '显示答案' }}
+            </button>
+            <p v-if="showAnswers[index]" class="answer"><strong>答案:</strong> {{ question.answer }}</p>
+          </div>
+        </div>
+        
         <!-- Chat Interface -->
         <div class="chat-container">
           <div class="chat-history" ref="chatHistoryContainer">
@@ -414,6 +492,52 @@ input[type="text"] {
 }
 .message-content p:last-child {
   margin-bottom: 0;
+}
+
+.ai-btn {
+  background-color: #ff9800;
+  font-size: 1.1rem;
+  padding: 0.8rem 2rem;
+  margin-top: 1.5rem;
+  display: block;
+  width: 100%;
+}
+.ai-btn:hover:not(:disabled) {
+  background-color: #f57c00;
+}
+
+.quiz-container {
+  margin-top: 2rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.5rem;
+}
+
+.quiz-question {
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #f0f2f5;
+}
+
+.options label {
+  margin-left: 0.5rem;
+}
+
+.short-answer-input {
+  margin: 0.5rem 0;
+}
+
+.small-btn {
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+}
+
+.answer {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  background-color: #e6f7f0;
+  border-left: 3px solid var(--primary-color);
+  border-radius: 4px;
 }
 
 </style> 

@@ -1,8 +1,11 @@
 package com.example.studyassistant.controller;
 
+import com.example.studyassistant.entity.Document;
+import com.example.studyassistant.repository.DocumentRepository;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,6 +20,9 @@ import java.io.IOException;
 @RequestMapping("/api")
 public class FileUploadController {
 
+    @Autowired
+    private DocumentRepository documentRepository;
+
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
         if (file.isEmpty()) {
@@ -24,15 +30,17 @@ public class FileUploadController {
         }
 
         try (PDDocument document = Loader.loadPDF(file.getBytes())) {
-            if (!document.isEncrypted()) {
-                PDFTextStripper pdfStripper = new PDFTextStripper();
-                String text = pdfStripper.getText(document);
-                return new ResponseEntity<>(text, HttpStatus.OK);
-            }
-            return new ResponseEntity<>("The document is encrypted.", HttpStatus.BAD_REQUEST);
+            PDFTextStripper pdfStripper = new PDFTextStripper();
+            String text = pdfStripper.getText(document);
+
+            Document newDocument = new Document(file.getOriginalFilename(), text);
+            documentRepository.save(newDocument);
+
+            return new ResponseEntity<>("File uploaded and saved successfully!", HttpStatus.OK);
+
         } catch (IOException e) {
             // Log the exception
-            return new ResponseEntity<>("Failed to parse PDF file.", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Failed to parse or save PDF file.", HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 } 

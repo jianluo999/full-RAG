@@ -1,9 +1,14 @@
+D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\service\SummaryService.java
+D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\dto\QuizRequest.java
 D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\dto\RagRequest.java
 D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\repository\DocumentRepository.java
 D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\controller\QueryController.java
+D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\entity\Document.java
+D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\dto\QuizQuestion.java
+D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\controller\QuizController.java
 D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\StudyAssistantApplication.java
 D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\controller\FileUploadController.java
 D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\controller\RAGController.java
-D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\entity\Document.java
 D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\dto\ChatMessage.java
 D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\service\RAGService.java
+D:\StudyPlanT\深度学习\mazhe\backend\src\main\java\com\example\studyassistant\service\QuizService.java

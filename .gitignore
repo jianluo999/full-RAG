@@ -1,0 +1,33 @@
+# Maven/Java
+/backend/target/
+/backend/pom.xml.tag
+/backend/pom.xml.releaseBackup
+/backend/pom.xml.versionsBackup
+/backend/release.properties
+/backend/dependency-reduced-pom.xml
+/backend/buildNumber.properties
+/backend/.mvn/timing.properties
+/backend/*.iml
+/backend/.idea
+.project
+.classpath
+.settings
+
+# Node.js/Vue
+/frontend/study-assistant-ui/node_modules/
+/frontend/study-assistant-ui/dist/
+/frontend/study-assistant-ui/.env.local
+/frontend/study-assistant-ui/.env.*.local
+/frontend/study-assistant-ui/npm-debug.log*
+/frontend/study-assistant-ui/yarn-debug.log*
+/frontend/study-assistant-ui/yarn-error.log*
+
+# Installer
+/installer/
+*.exe
+
+# General
+.DS_Store
+*.log
+*.zip
+*.rar 

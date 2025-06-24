@@ -1,9 +1,9 @@
 # 🧠 智能学习助手 Ultra - 你的本地AI学习伙伴
 
-[![Stargazers](https://img.shields.io/github/stars/YOUR_USERNAME/YOUR_REPO?style=social)](https://github.com/YOUR_USERNAME/YOUR_REPO/stargazers)
-[![Forks](https://img.shields.io/github/forks/YOUR_USERNAME/YOUR_REPO?style=social)](https://github.com/YOUR_USERNAME/YOUR_REPO/network/members)
+[![Stargazers](https://img.shields.io/github/stars/jianluo999/full-RAG?style=social)](https://github.com/jianluo999/full-RAG/stargazers)
+[![Forks](https://img.shields.io/github/forks/jianluo999/full-RAG?style=social)](https://github.com/jianluo999/full-RAG/network/members)
 
-你好，我是作者[你的名字]，很高兴在小红书/这里与你分享这个我独立开发的项目！
+你好，我是作者 **jianluo**，很高兴在这里与你分享这个我独立开发的项目！
 
 你是否也曾为了复习堆积如山的PDF资料而烦恼？是否也曾希望有一个能24小时陪你学习、为你划重点、甚至考考你的"高配版学伴"？
 
@@ -21,6 +21,49 @@
 *   **长时对话记忆**：独有的"对话摘要"技术，让AI在长篇对话中也能保持记忆，理解上下文。
 *   **AI随堂测验**：一键让AI根据文档内容为你出题，检验你的学习成果，支持选择题、简答题、名词解释等多种题型。
 *   **本地模型驱动**：支持Ollama，可自由选择并切换适合你硬件的本地大语言模型。
+
+---
+
+## 🚀 快速开始
+
+### 环境配置
+
+在运行本项目前，请确保你的电脑上已经安装了以下环境：
+
+1.  **Java Development Kit (JDK)**: `v17` 或更高版本。
+2.  **Apache Maven**: `v3.8` 或更高版本，用于构建后端项目。
+3.  **Node.js**: `v18` 或更高版本，用于构建前端项目。
+4.  **Ollama**: 用于驱动AI功能。
+    *   访问 [ollama.com](https://ollama.com) 下载并安装。
+    *   安装后，请从 [Ollama Library](https://ollama.com/library) 拉取一个你需要的模型，例如 `llama3:8b`。
+      ```bash
+      ollama pull llama3:8b
+      ```
+
+### 项目部署
+
+1.  **克隆仓库**
+    ```bash
+    git clone https://github.com/jianluo999/full-RAG.git
+    cd full-RAG
+    ```
+
+2.  **启动后端 (Spring Boot)**
+    打开一个新的终端窗口：
+    ```bash
+    cd backend
+    mvn spring-boot:run
+    ```
+    后端服务默认运行在 `http://localhost:8080`。
+
+3.  **启动前端 (Vue)**
+    打开另一个新的终端窗口：
+    ```bash
+    cd frontend/study-assistant-ui
+    npm install
+    npm run dev
+    ```
+    前端开发服务器将启动，你可以在浏览器中访问 `http://localhost:5173` (或终端提示的地址) 来使用本应用。
 
 ---
 
@@ -46,43 +89,6 @@
 
 ---
 
-## 🚀 如何运行 (小白终极版)
-
-为了让每个人都能轻松体验，我们已经将应用打包成一个标准的安装程序。你只需要：
-
-### 第一步：安装"大脑驱动" - Ollama
-
-这是我们应用能够思考的关键，你需要先在电脑上安装它。
-
-1.  **访问官网**：打开浏览器，访问 [https://ollama.com](https://ollama.com)。
-2.  **下载安装**：点击网站上的"Download"按钮，选择你的操作系统（比如Windows），下载并像安装QQ一样安装它。
-    *(提示: 安装Ollama后最好重启一次电脑，确保服务正常启动。)*
-
-### 第二步：为"大脑"注入知识 - 下载模型
-
-安装好Ollama后，我们需要下载一个语言模型。这里我们推荐使用`Llama 3 8B`。
-
-1.  **打开终端**：
-    *   **Windows**: 按下 `Win` 键，输入 `cmd` 或 `powershell`，然后回车。
-    *   **Mac**: 使用 `Command + 空格` 打开聚焦搜索，输入 `Terminal`，然后回车。
-2.  **复制并粘贴命令**：复制下面这行命令，粘贴到你刚打开的黑色窗口中，然后按回车。
-    ```bash
-    ollama pull llama3:8b
-    ```
-3.  **耐心等待**：你会看到一个进度条，它正在下载模型文件（大约4.7GB）。请耐心等待它完成。
-
-### 第三步：安装并运行我们的应用！
-
-现在，万事俱备！
-
-1.  **下载本项目**：从[这里](https://github.com/YOUR_USERNAME/YOUR_REPO/releases)下载最新的 `.exe` 安装包。
-2.  **双击安装**：找到下载的 `Study-Assistant-Ultra-1.0.0.exe` 文件，双击它，像安装普通软件一样，一路点击"下一步"即可。
-3.  **启动应用**：安装完成后，你的桌面和开始菜单里会出现"Study Assistant Ultra"的图标。双击它即可启动！应用会自动在浏览器中打开。
-
-**数据存储说明**：你的所有学习数据（上传的文档等）都会被自动保存在你安装目录下的 `study_data` 文件夹中，绝对私密，请放心使用。
-
----
-
 ## 💡 设计思路与未来
 
 本项目采用了 **RAG (Retrieval-Augmented Generation)** 架构，当用户提问时，系统会首先从用户上传的私有知识库中检索最相关的内容，然后将这些内容和问题一起交给本地大模型去生成最终答案，确保了回答的准确性和时效性。
@@ -98,7 +104,7 @@
 
 感谢你的使用！如果你觉得这个小工具有趣或对你有帮助，欢迎：
 *   在GitHub上给我一个 **Star** ⭐！
-*   在小红书/B站/等平台分享它，让更多人看到。
+*   分享它，让更多人看到。
 *   提出你的建议和想法，或者参与到开发中来！
 
 Enjoy learning! 
